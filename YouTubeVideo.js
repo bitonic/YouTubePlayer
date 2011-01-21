@@ -28,12 +28,13 @@ var YouTubeVideo = new Class({
         quality: 'default',
         embedded: true
     },
-    // The default url
-    chromelessUrl: new URI("http://www.youtube.com/apiplayer").setData({
+    
+    // The default URIs
+    chromelessURI: new URI("http://www.youtube.com/apiplayer").setData({
         enablejsapi: 1,
         version: 3
     }),
-    embeddedUrl: new URI("http://www.youtube.com/v/").setData({
+    embeddedURI: new URI("http://www.youtube.com/v/").setData({
         enablejsapi: 1,
         version: 3
     }),
@@ -41,12 +42,15 @@ var YouTubeVideo = new Class({
     initialize: function(options) {
         var self = this;
 
+        this.setOptions(options);
+        options = this.options;
+
         var swfUrl;
-        if (true) {
-            var swfUrl = this.embeddedUrl;
+        if (options.embedded) {
+            var swfUrl = this.embeddedURI;
             swfUrl.set('directory', swfUrl.get('directory') + options.videoId);
         } else {
-            var swfUrl = this.chromelessUrl.setData({
+            var swfUrl = this.chromelessURI.setData({
                 video_id: options.videoId,
             }, true);            
         }
@@ -64,21 +68,4 @@ var YouTubeVideo = new Class({
         }
     },
 
-});
-
-// Random stuff for debugging
-window.addEvent('domready', function() {
-    var video = new YouTubeVideo({
-        width: 425,
-        height: 356,
-        videoId: 'u1zgFlCw8Aw',
-        id: 'ytvideo'
-    });
-
-    $('ytplayer').empty();
-    $('ytplayer').grab(video);
-
-    $('ytplayer').addEvent('click', function() {
-        video.pauseVideo();
-    });
 });
