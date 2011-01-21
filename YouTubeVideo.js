@@ -1,4 +1,23 @@
-/* Class to create you tube video */
+/*
+  ---
+
+  script: YouTubeVideo.js
+
+  description: Wrapper to the YouTube JavaScript APIs.
+
+  license: GPLv2
+
+  authors:
+  - Francesco Mazzoli <f@mazzo.li>
+
+  requires:
+  - core:1.3
+  - more:1.3/URI
+
+  provides: [YouTubeVideo]
+  
+  ...
+*/
 
 var YouTubeVideo = new Class({
     Extends: Swiff,
