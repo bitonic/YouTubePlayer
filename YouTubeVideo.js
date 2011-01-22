@@ -80,7 +80,21 @@ var YouTubeVideo = new Class({
             self.playerReady = true,
             self.fireEvent('playerReady');
         }
+
+        // Fire the yt api events
+        for (var i in this.ytEvents) {
+            eval("window.ytEventsListener_" + this.ytEvents[i] + " = function(arg) {" +
+                      "self.fireEvent('" + i + "', arg);" +
+                 "}");
+
+            this.enqueueAction('addEventListener', this.ytEvents[i],
+                               'ytEventsListener_' + this.ytEvents[i]);
+        }
     },
+
+    
+    //--------------------------------------------------------------------------
+    // Class internals...
 
     addEvent: function(type, fn) {
         if (this.ytEvents[type] != undefined) {
@@ -88,15 +102,10 @@ var YouTubeVideo = new Class({
             // add the event listener through the API function.
             Events.prototype.addEvent.call(this, type, fn);
 
-            // Remember that one event can be listened at a time, so
-            // the last event added will be listened.
             var self = this;
             window.ytEventsListener = function(arg) {
                 self.fireEvent(type, arg);
             }
-
-            this.enqueueAction('addEventListener', this.ytEvents[type],
-                               'ytEventsListener');
         } else if (this.playerReady && type == 'playerReady') {
             // If the event is playerReady and the player is ready,
             // simply execute the function.
@@ -126,6 +135,22 @@ var YouTubeVideo = new Class({
             });
         }
     },
+
+    // This function is to use with functions that are supposed to
+    // return something. It will return null if the player is not
+    // ready, or what the action should return if the player is ready.
+    maybeAction: function(fnName) {
+        // Pop the first argument, which is the function name
+        var args = Array.from(arguments);
+        args.shift();
+
+        if (this.playerReady) {
+            return this.object[fnName].apply(this.object, args);
+        } else {
+            return null;
+        }
+    },
+
 
     //--------------------------------------------------------------------------
     // Queueing functions
@@ -203,7 +228,7 @@ var YouTubeVideo = new Class({
     },
     
     isMuted: function() {
-        return this.object.isMuted();
+        return this.maybeAction('isMuted');
     },
 
     setVolume: function(volume) {
