@@ -75,33 +75,84 @@ var YouTubeVideo = new Class({
         }
     },
 
-    enqueueVideoAction: function(fn) {
+    videoAction: function(fnName) {
         // Pop the first argument, which would be the function
         var args = Array.from(arguments);
         args.shift();
 
         if (this.playerReady) {
-            fn.apply(this.object, args);
+            this.object[fnName].apply(this.object, args);
         } else {
             // If the player isn't ready yet, add an event to fire the
             // requested function with the requested arguments when it
             // will be ready.
             var self = this;
             this.addEvent('playerReady', function() {
-                fn.apply(self.object, args);
+                this.videoAction(fnName, args);
             });
         }
     },
 
-    playVideo: function() {
-        this.enqueueVideoAction(this.object.playVideo);
+    //--------------------------------------------------------------------------
+    // Queueing functions
+
+
+    loadVideo: function(idOrUrl, seconds, play, quality) {
+        // If no quality is specified, use the one specified when
+        // creating the object
+        if (!quality) {
+            quality = this.quality;
+        }
+
+        var fnName;
+
+        
+        if (this.isId(idOrUrl)) {
+            // If the play paramenter is not present, default to load
+            if (play === undefined || play) {
+                this.videoAction('loadVideoById', idOrUrl, seconds, quality);
+            } else {
+                this.videoAction('cueVideoById', idOrUrl, seconds, quality);
+            }
+        } else {
+            if (play === undefined || play) {
+                this.videoAction('loadVideoByUrl', idOrUrl, seconds, quality);
+            } else {
+                this.videoAction('cueVideoByUrl', idOrUrl, seconds, quality);
+            }
+
+            // Set the quality
+            this.setQuality(quality);
+        }
     },
 
-    pauseVideo: function() {
-        this.enqueueVideoAction(this.object.pauseVideo);
+    cueVideo: function(idOrUrl, seconds, quality) {
+        this.loadVideo(idOrUrl, seconds, false, quality);
     },
 
-    seekTo: function(seconds, seekAhead) {
-        this.enqueueVideoAction(this.object.seekTo, seconds, seekAhead);
+    
+    //--------------------------------------------------------------------------
+    // Playback functions
+
+    play: function() {
+        this.videoAction('playVideo');
     },
+
+    pause: function() {
+        this.videoAction('pauseVideo');
+    },
+
+    seek: function(seconds, seekAhead) {
+        this.videoAction('seekTo', seconds, seekAhead);
+    },
+
+
+    //--------------------------------------------------------------------------
+    // Utilities
+
+    // This function is supposed to test id and urls only.
+    isId: function(s) {
+        // If it has a dot in it, it must be an url.
+        return s.indexOf(".") == -1;
+    }.protect()
 });
