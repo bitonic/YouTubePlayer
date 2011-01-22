@@ -80,50 +80,23 @@ var YouTubeVideo = new Class({
             self.playerReady = true,
             self.fireEvent('playerReady');
         }
-
-        // It is necessary to create a global function to handle the
-        // API events, since the addEventListener function accepts
-        // string function name as paramenter, and not actual
-        // functions.        
-        // HACKY CODE AHEAD
-        var YTEventsHandler = new Class({
-            listeners: new Object(),
-
-            initialize: function() {
-                for (var i in self.ytEvents) {
-                    this.listeners[i] = new Array();
-                }
-            },
-
-            addEvent: function(type, fn) {
-                this.listeners[type] = this.listeners[type].concat([fn]);
-            },
-            
-            fireEvent: function(type, arg) {
-                // Call all the events
-                for (var i = 0; i < this.listeners[type].length; i++) {
-                    this.listeners[type][i](arg);
-                }
-            }
-        });
-
-        window.ytEventsHandler = new YTEventsHandler();
     },
 
     addEvent: function(type, fn) {
         if (this.ytEvents[type] != undefined) {
             // If the event is one of the events provided by the API,
             // add the event listener through the API function.
-            window.ytEventsHandler.addEvent(type, fn);
+            Events.prototype.addEvent.call(this, type, fn);
 
             // Remember that one event can be listened at a time, so
             // the last event added will be listened.
-            window.ytEventsHandlerListener = function(arg) {
-                window.ytEventsHandler.fireEvent(type, arg);
+            var self = this;
+            window.ytEventsListener = function(arg) {
+                self.fireEvent(type, arg);
             }
 
             this.enqueueAction('addEventListener', this.ytEvents[type],
-                               'ytEventsHandlerListener');
+                               'ytEventsListener');
         } else if (this.playerReady && type == 'playerReady') {
             // If the event is playerReady and the player is ready,
             // simply execute the function.
