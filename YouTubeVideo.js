@@ -75,24 +75,6 @@ var YouTubeVideo = new Class({
         }
     },
 
-    videoAction: function(fnName) {
-        // Pop the first argument, which would be the function
-        var args = Array.from(arguments);
-        args.shift();
-
-        if (this.playerReady) {
-            this.object[fnName].apply(this.object, args);
-        } else {
-            // If the player isn't ready yet, add an event to fire the
-            // requested function with the requested arguments when it
-            // will be ready.
-            var self = this;
-            this.addEvent('playerReady', function() {
-                this.videoAction(fnName, args);
-            });
-        }
-    },
-
     //--------------------------------------------------------------------------
     // Queueing functions
 
@@ -110,15 +92,15 @@ var YouTubeVideo = new Class({
         if (this.isId(idOrUrl)) {
             // If the play paramenter is not present, default to load
             if (play === undefined || play) {
-                this.videoAction('loadVideoById', idOrUrl, seconds, quality);
+                this.object.loadVideoById(idOrUrl, seconds, quality);
             } else {
-                this.videoAction('cueVideoById', idOrUrl, seconds, quality);
+                this.object.cueVideoById(idOrUrl, seconds, quality);
             }
         } else {
             if (play === undefined || play) {
-                this.videoAction('loadVideoByUrl', idOrUrl, seconds, quality);
+                this.object.loadVideoByUrl(idOrUrl, seconds, quality);
             } else {
-                this.videoAction('cueVideoByUrl', idOrUrl, seconds, quality);
+                this.object.cueVideoByUrl(idOrUrl, seconds, quality);
             }
 
             // Set the quality
@@ -132,21 +114,33 @@ var YouTubeVideo = new Class({
 
     
     //--------------------------------------------------------------------------
-    // Playback functions
+    // Playback controls and player settings
 
     play: function() {
-        this.videoAction('playVideo');
+        this.object.playVideo();
     },
 
     pause: function() {
-        this.videoAction('pauseVideo');
+        this.object.pauseVideo();
+    },
+
+    stop: function() {
+        this.object.stopVideo();
     },
 
     seek: function(seconds, seekAhead) {
-        this.videoAction('seekTo', seconds, seekAhead);
+        this.object.seekTo(seconds, seekAhead);
     },
 
+    clear: function() {
+        this.object.clearVideo();
+    },
 
+    //--------------------------------------------------------------------------
+    // Player volume
+    
+    
+    
     //--------------------------------------------------------------------------
     // Utilities
 
