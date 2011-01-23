@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>YouTubePlayer demo</title>
+    <script type="text/javascript" src="http://mootools.net/download/get/mootools-core-1.3-full-nocompat-yc.js"></script>
+    <script type="text/javascript" src="https://github.com/mootools/mootools-more/raw/1.3.0.1/Source/More/More.js"></script>
+    <script type="text/javascript" src="https://github.com/mootools/mootools-more/raw/1.3.0.1/Source/Types/String.QueryString.js"></script>
+    <script type="text/javascript" src="https://github.com/mootools/mootools-more/raw/1.3.0.1/Source/Types/URI.js"></script>
+
+    <script type="text/javascript" src="YouTubePlayer.js"></script>
+
+    <style type="text/css">
+      #left {
+          float:left;
+          padding:10px;
+      }
+
+      h3 {
+          margin:5px 5px 5px -5px;
+      }
+
+      ol {
+          margin:0;
+      }
+    </style>
+    <script type="text/javascript">
+      var video;
+      window.addEvent('domready', function() {
+          // Creating the player object
+          video = new YouTubePlayer({
+              width: 425,
+              height: 356,
+              videoId: 'u1zgFlCw8Aw',
+              id: 'video1',
+              embedded: true
+          });
+          window.playerType = 'embedded';
+          $('idOrUrl').set('value', 'u1zgFlCw8Aw');
+
+          $('player').empty();
+          $('player').grab(video);
+
+          $('startAt').set('value', '0');
+
+          var refresh = new Array();
+
+          // Playback controls
+          $('pause').addEvent('click', function() {
+              video.pauseVideo();
+          });
+
+          $('play').addEvent('click', function() {
+              video.playVideo();
+          });
+
+          $('stop').addEvent('click', function() {
+              video.stopVideo();
+          });
+
+          $('seekToGo').addEvent('click', function() {
+              video.seekTo(parseInt($('seekTo').get('value')));
+          });
+
+          // Volume controls
+          $('mute').addEvent('click', function() {
+              video.mute();
+          });
+
+          $('unmute').addEvent('click', function() {
+              video.unMute();
+          });
+
+          refresh = refresh.concat([function() {
+              $('currentVolume').set('text', video.getVolume());
+          }]);
+
+          $('setVolume').addEvent('click', function() {
+              video.setVolume(parseInt($('volume').get('value')));
+          });
+
+          // Player size
+          $('width').set('value', video.get('width'));
+          refresh = refresh.concat([function() {
+              $('height').set('text', video.get('height'));
+          }])
+
+          $('setSize').addEvent('click', function() {
+              var width = parseInt($('width').get('value'));
+              var height;
+              if ($('ratio').get('value') == '1') {
+                  // 16:9
+                  height = width * 9 / 16;
+              } else {
+                  // 4:3
+                  height = width * 3 / 4;
+              }
+              video.setSize(width, height);
+          });
+
+          // History
+          // Counts the events
+          window.events = 0;
+          video.addEvent('stateChange', function(state) {
+              window.events++;
+              $('events').grab(new Element('li', {
+                  text: 'The state changed changed to "' + state +
+                      '" (' + YouTubePlayer.states[parseInt(state)] + ').',
+                  value: window.events
+              }), 'top');
+          });
+
+          video.addEvent('error', function(error) {
+              window.events++;
+              $('events').grab(new Element('li', {
+                  text: 'Error: "' + error + '".',
+                  value: window.events
+              }), 'top');
+          });
+
+          video.addEvent('playbackQualityChange', function(quality) {
+              window.events++;
+              $('events').grab(new Element('li', {
+                  text: 'The playback quality changed to "' + quality + '".',
+                  value: window.events
+              }), 'top');
+          });
+
+          video.addEvent('playerReady', function() {
+              window.events++;
+              $('events').grab(new Element('li', {
+                  text: 'Player ready.',
+                  value: window.events
+              }), 'top');
+
+          });
+
+          // Player type
+          $('playerType').addEvent('change', function() {
+              var options = video.options;
+              options.width = video.get('width');
+              options.height = video.get('height');
+              if ($('playerType').get('value') == 'embedded') {
+                  options.embedded = true;
+              } else {
+                  options.embedded = false;
+              }
+
+              video = new YouTubePlayer(options);
+
+              $('player').empty();
+              $('player').grab(video);
+          });
+
+          // Load/cue video
+          $('loadVideo').addEvent('click', function() {
+              video.loadVideo($('idOrUrl').get('value'),
+                              parseInt($('startAt').get('value')),
+                              $('newQuality').get('value'));
+          });
+
+          $('cueVideo').addEvent('click', function() {
+              video.cueVideo($('idOrUrl').get('value'),
+                             parseInt($('startAt').get('value')),
+                             $('newQuality').get('value'));
+          });  
+
+          // Set the quality
+          $('setQuality').addEvent('change', function() {
+              video.setPlaybackQuality($('setQuality').get('value'));
+          });
+
+          // Playback statistics
+          refresh = refresh.concat([function() {
+              $('duration').set('text', video.getDuration());
+              $('currentTime').set('text', video.getCurrentTime());
+              var state = video.getPlayerState();
+              $('playerState').set('text',
+                                   state + ' (' + YouTubePlayer.states[state] + ')');
+              $('totalBytes').set('text', video.getVideoBytesTotal());
+              $('startBytes').set('text', video.getVideoStartBytes());
+              $('bytesLoaded').set('text', video.getVideoBytesLoaded());
+              $('currentQuality').set('text', video.getPlaybackQuality());
+              $('availableQualities').set(
+                  'text',
+                  video.getAvailableQualityLevel().join(', '));
+          }]);
+
+          var delay = 300;
+          window.setInterval(function() {
+              for (var i = 0; i < refresh.length; i++) {
+                  refresh[i]();
+
+              }
+          }, delay);
+
+      });
+     </script>
+  </head>
+  <body>
+    <div id="left">
+      <div id="player">
+        You need Flash player 8+ and JavaScript enabled to view this video.
+      </div>
+      
+      <h3>Playback controls</h3>
+      <a href="javascript:void(0)" id="play">Play</a> |
+      <a href="javascript:void(0)" id="pause">Pause</a> |
+      <a href="javascript:void(0)" id="stop">Stop</a><br/>
+      Seek to: <input id="seekTo" type="text" size=4 value="0" /> seconds 
+      <input type="submit" value="Go" id="seekToGo" />
+      <br/>
+
+      <h3>Volume controls</h3>
+      <a href="javascript:void(0)" id="mute">Mute</a> |
+      <a href="javascript:void(0)" id="unmute">Unmute</a> |
+      Set volume: <input type="text" size="4" id="volume" /> (0-100)
+      [<span id="currentVolume"></span>]
+      <input type="submit" value="Go" id="setVolume" />
+
+      <h3>Player size</h3>
+      Aspect ratio:
+      <select id="ratio">
+        <option value="1">16:9</option>
+        <option value="2">4:3</option>
+      </select> |
+      Width: <input type="text" size="4" id="width"/> |
+      Height: <span id="height"></span>
+      <input type="submit" value="Go" id="setSize" />
+
+      <h3>History</h3>
+      <strong>Events</strong>
+      <ol id="events"></ol>
+      <strong>Video URL</strong><br/>
+      <span id="videoUrl"></span>
+      <strong>Embed Code</strong><br/>
+      <textarea id="embed" cols="70" rows="10"></textarea>
+    </div>
+
+    <h3>Select your player</h3>
+    Player type:
+    <select id="playerType">
+      <option value="embedded">Embedded</option>
+      <option value="chromeless">Chromeless</option>
+    </select>
+    
+    <h3>Load or cue a video</h3>
+    Video id or URL: <input type="text" id="idOrUrl" size="20" /><br/>
+    Start at: <input type="text" id="startAt" size="4" value="0" /> seconds<br/>
+    Suggested quality:
+    <select id="newQuality">
+      <option value="default">default</option>
+      <option value="small">small</option>
+      <option value="medium">medium</option>
+      <option value="large">large</option>
+      <option value="hd720">hd720</option>
+      <option value="hd1080">hd1080</option>
+      <option value="highres">highres</option>
+    </select><br/>
+    <input type="submit" value="Load video" id="loadVideo" />
+    <input type="submit" value="Cue video" id="cueVideo" />
+
+    <h3>Update current video</h3>
+    Set quality:
+    <select id="setQuality">
+      <option value="default">default</option>
+      <option value="small">small</option>
+      <option value="medium">medium</option>
+      <option value="large">large</option>
+      <option value="hd720">hd720</option>
+      <option value="hd1080">hd1080</option>
+      <option value="highres">highres</option>
+    </select><br/>
+    
+    <h3>Playback statistics</h3>
+    Duration: <span id="duration"></span><br/>
+    Current time: <span id="currentTime"></span><br/>
+    Player state: <span id="playerState"></span><br/><br/>
+    Total bytes: <span id="totalBytes"></span><br/>
+    Start bytes: <span id="startBytes"></span><br/>
+    Bytes loaded: <span id="bytesLoaded"></span><br/><br/>
+    Quality level: <span id="currentQuality"></span><br/>
+    Available levels: <span id="availableQualities"></span><br/>
+    
+  </body>
+</html>
