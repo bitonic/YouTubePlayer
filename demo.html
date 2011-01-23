@@ -42,7 +42,7 @@
 
           $('startAt').set('value', '0');
 
-          var refresh = new Array();
+          var refresh = [];
 
           // Playback controls
           $('pause').addEvent('click', function() {
@@ -70,7 +70,7 @@
               video.unMute();
           });
 
-          refresh = refresh.push(function() {
+          refresh.push(function() {
               $('currentVolume').set('text', video.getVolume());
           });
 
@@ -80,7 +80,7 @@
 
           // Player size
           $('width').set('value', video.get('width'));
-          refresh = refresh.push(function() {
+          refresh.push(function() {
               $('height').set('text', video.get('height'));
           })
 
@@ -182,7 +182,7 @@
           });
 
           // Playback statistics
-          refresh = refresh.push(function() {
+          refresh.push(function() {
               $('duration').set('text', video.getDuration());
               $('currentTime').set('text', video.getCurrentTime());
               var state = video.getPlayerState();
