@@ -89,7 +89,7 @@ var YouTubePlayer = new Class({
         // We create an object with the videos, with the uniqueId as
         // an index.
         if (window.youTubePlayers == undefined) {
-            window.youTubePlayers = new Object();
+            window.youTubePlayers = {};
         }
         window.youTubePlayers[self.uniqueId.toString()] = self;
 
@@ -304,7 +304,7 @@ var YouTubePlayer = new Class({
 
     // Array that stores all the functions to change the quality, so
     // that we have a reference to delete them from the events
-    playbackQualityEvents: new Array(),
+    playbackQualityEvents: [],
 
     setPlaybackQuality: function(suggestedQuality) {
         // If the player is "playing" or "paused", change the
@@ -326,7 +326,7 @@ var YouTubePlayer = new Class({
                 self.setPlaybackQuality(suggestedQuality);
             };
             // Add the function to the list of functions
-            this.playbackQualityEvents = this.playbackQualityEvents.concat([fn]);
+            this.playbackQualityEvents = this.playbackQualityEvents.push(fn);
             this.addEvent('stateChange', fn);
         }
     },

@@ -70,9 +70,9 @@
               video.unMute();
           });
 
-          refresh = refresh.concat([function() {
+          refresh = refresh.push(function() {
               $('currentVolume').set('text', video.getVolume());
-          }]);
+          });
 
           $('setVolume').addEvent('click', function() {
               video.setVolume(parseInt($('volume').get('value')));
@@ -80,9 +80,9 @@
 
           // Player size
           $('width').set('value', video.get('width'));
-          refresh = refresh.concat([function() {
+          refresh = refresh.push(function() {
               $('height').set('text', video.get('height'));
-          }])
+          })
 
           $('setSize').addEvent('click', function() {
               var width = parseInt($('width').get('value'));
@@ -182,7 +182,7 @@
           });
 
           // Playback statistics
-          refresh = refresh.concat([function() {
+          refresh = refresh.push(function() {
               $('duration').set('text', video.getDuration());
               $('currentTime').set('text', video.getCurrentTime());
               var state = video.getPlayerState();
@@ -197,7 +197,7 @@
                       'text',
                       video.getAvailableQualityLevels().join(', '));
               }
-          }]);
+          });
 
           var delay = 300;
           window.setInterval(function() {
