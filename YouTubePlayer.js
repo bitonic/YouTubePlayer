@@ -321,7 +321,6 @@ var YouTubePlayer = new Class({
             this.playbackQualityEvents.each(function(fn) {
                 self.removeEvent('stateChange', fn);
             });
-            console.log(this.$events['stateChange']);
         } else {
             var fn = function() {
                 self.setPlaybackQuality(suggestedQuality);
