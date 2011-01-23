@@ -98,6 +98,12 @@
           });
 
           // History
+          // Change the video url and embed code
+          var urlAndEmbed = function() {
+              $('videoUrl').set('text', video.getVideoUrl());
+              $('embed').set('value', video.getEmbedCode());
+          };
+
           // Counts the events
           window.events = 0;
           video.addEvent('stateChange', function(state) {
@@ -131,8 +137,10 @@
                   text: 'Player ready.',
                   value: window.events
               }), 'top');
-
+              
+              urlAndEmbed();
           });
+
 
           // Player type
           $('playerType').addEvent('change', function() {
@@ -156,12 +164,16 @@
               video.loadVideo($('idOrUrl').get('value'),
                               parseInt($('startAt').get('value')),
                               $('newQuality').get('value'));
+
+              urlAndEmbed();
           });
 
           $('cueVideo').addEvent('click', function() {
               video.cueVideo($('idOrUrl').get('value'),
                              parseInt($('startAt').get('value')),
                              $('newQuality').get('value'));
+
+              urlAndEmbed();
           });  
 
           // Set the quality
@@ -180,9 +192,11 @@
               $('startBytes').set('text', video.getVideoStartBytes());
               $('bytesLoaded').set('text', video.getVideoBytesLoaded());
               $('currentQuality').set('text', video.getPlaybackQuality());
-              $('availableQualities').set(
-                  'text',
-                  video.getAvailableQualityLevel().join(', '));
+              if (video.getAvailableQualityLevels()) {
+                  $('availableQualities').set(
+                      'text',
+                      video.getAvailableQualityLevels().join(', '));
+              }
           }]);
 
           var delay = 300;
@@ -197,6 +211,11 @@
      </script>
   </head>
   <body>
+    <div>
+      <h2>YouTubePlayer demo</h2>
+      Clone of the <a href="http://code.google.com/apis/youtube/youtube_player_demo.html">official demo</a>, except that the code is 100x better:
+    </div>
+
     <div id="left">
       <div id="player">
         You need Flash player 8+ and JavaScript enabled to view this video.
@@ -220,8 +239,8 @@
       <h3>Player size</h3>
       Aspect ratio:
       <select id="ratio">
-        <option value="1">16:9</option>
         <option value="2">4:3</option>
+        <option value="1">16:9</option>
       </select> |
       Width: <input type="text" size="4" id="width"/> |
       Height: <span id="height"></span>
@@ -231,7 +250,7 @@
       <strong>Events</strong>
       <ol id="events"></ol>
       <strong>Video URL</strong><br/>
-      <span id="videoUrl"></span>
+      <span id="videoUrl"></span><br/>
       <strong>Embed Code</strong><br/>
       <textarea id="embed" cols="70" rows="10"></textarea>
     </div>

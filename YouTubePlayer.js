@@ -302,23 +302,37 @@ var YouTubePlayer = new Class({
         return this.maybeAction('getPlaybackQuality');
     },
 
+    // Array that stores all the functions to change the quality, so
+    // that we have a reference to delete them from the events
+    playbackQualityEvents: new Array(),
+
     setPlaybackQuality: function(suggestedQuality) {
         // If the player is "playing" or "paused", change the
         // quality. If it isn't, wait until the state changes and try
         // again.
+
+        var self = this;
         if (this.getPlayerState() == 1 || this.getPlayerState() == 2) {
             this.suggestedQuality = suggestedQuality;
             
             this.enqueueAction('setPlaybackQuality', suggestedQuality);
-        } else {
-            var self = this;
-            this.addEvent('stateChange', function() {
-                self.setPlaybackQuality(suggestedQuality);
+
+            // Remove all the events
+            this.playbackQualityEvents.each(function(fn) {
+                self.removeEvent('stateChange', fn);
             });
+            console.log(this.$events['stateChange']);
+        } else {
+            var fn = function() {
+                self.setPlaybackQuality(suggestedQuality);
+            };
+            // Add the function to the list of functions
+            this.playbackQualityEvents = this.playbackQualityEvents.concat([fn]);
+            this.addEvent('stateChange', fn);
         }
     },
-
-    getAvailableQualityLevel: function() {
+    
+    getAvailableQualityLevels: function() {
         return this.maybeAction('getAvailableQualityLevels');
     },
 
