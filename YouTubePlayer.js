@@ -253,7 +253,7 @@ var YouTubePlayer = new Class({
     },
 
     getVolume: function() {
-        return this.object.getVolume();
+        return this.maybeAction('getVolume');
     },
 
 
@@ -267,26 +267,26 @@ var YouTubePlayer = new Class({
     // Playback status
 
     getBytesLoaded: function() {
-        return this.object.getVideoBytesLoaded();
+        return this.maybeAction('getVideoBytesLoaded');
     },
 
     getBytesTotal: function() {
-        return this.object.getVideoBytesTotal();
+        return this.maybeAction('getVideoBytesTotal');
     },
 
     getPlayerState: function() {
-        return this.object.getPlayerState();
+        return this.maybeAction('getPlayerState');
     },
 
     getCurrentTime: function() {
-        return this.object.getCurrentTime();
+        return this.maybeAction('getCurrentTime');
     },
 
     
     // Playback quality
 
     getPlaybackQuality: function() {
-        return this.object.getPlaybackQuality();
+        return this.maybeAction('getPlaybackQuality');
     },
 
     setPlaybackQuality: function(suggestedQuality) {
@@ -296,21 +296,21 @@ var YouTubePlayer = new Class({
     },
 
     getAvailableQualityLevels: function() {
-        return this.object.getAvailableQualityLevels();
+        return this.maybeAction('getAvailableQualityLevels');
     },
 
     // Video info
 
     getDuration: function() {
-        return this.object.getDuration();
+        return this.maybeAction('getDuration');
     },
 
     getVideoUrl: function() {
-        return this.object.getVideoUrl();
+        return this.maybeAction('getVideoUrl');
     },
 
     getVideoEmbedCode: function() {
-        return this.getVideoEmbedCode();
+        return this.maybeAction('getVideoEmbedCode');
     },
 
     //--------------------------------------------------------------------------
