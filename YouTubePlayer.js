@@ -168,6 +168,14 @@ var YouTubePlayer = new Class({
         }
     },
 
+    get: function(attribute) {
+        return this.object.get(attribute);
+    },
+
+    set: function(attribute, value) {
+        this.object.set(attribute, value);
+    },
+
 
     //--------------------------------------------------------------------------
     // Queueing functions
@@ -192,13 +200,13 @@ var YouTubePlayer = new Class({
             }
         } else {
             if (play === undefined || play) {
-                this.object.loadVideoByUrl(idOrUrl, seconds, suggestedQuality);
+                this.object.loadVideoByUrl(idOrUrl, seconds);
             } else {
-                this.object.cueVideoByUrl(idOrUrl, seconds, suggestedQuality);
+                this.object.cueVideoByUrl(idOrUrl, seconds);
             }
 
             // Set the quality
-            this.setQuality(suggestedQuality);
+            this.setPlaybackQuality(suggestedQuality);
         }
     },
 
@@ -260,18 +268,23 @@ var YouTubePlayer = new Class({
     // Changing player size
 
     setSize: function(width, height) {
-        this.enqueueAction('setSize', width, height);
+        this.set('width', width);
+        this.set('height', height);
     },
     
 
     // Playback status
 
-    getBytesLoaded: function() {
+    getVideoBytesLoaded: function() {
         return this.maybeAction('getVideoBytesLoaded');
     },
 
-    getBytesTotal: function() {
+    getVideoBytesTotal: function() {
         return this.maybeAction('getVideoBytesTotal');
+    },
+
+    getVideoStartBytes: function() {
+        return this.maybeAction('getVideoStartBytes');
     },
 
     getPlayerState: function() {
@@ -290,12 +303,22 @@ var YouTubePlayer = new Class({
     },
 
     setPlaybackQuality: function(suggestedQuality) {
-        this.suggestedQuality = suggestedQuality;
-        
-        this.enqueueAction('setPlaybackQuality', suggestedQuality);
+        // If the player is "playing" or "paused", change the
+        // quality. If it isn't, wait until the state changes and try
+        // again.
+        if (this.getPlayerState() == 1 || this.getPlayerState() == 2) {
+            this.suggestedQuality = suggestedQuality;
+            
+            this.enqueueAction('setPlaybackQuality', suggestedQuality);
+        } else {
+            var self = this;
+            this.addEvent('stateChange', function() {
+                self.setPlaybackQuality(suggestedQuality);
+            });
+        }
     },
 
-    getAvailableQualityLevels: function() {
+    getAvailableQualityLevel: function() {
         return this.maybeAction('getAvailableQualityLevels');
     },
 
@@ -322,3 +345,20 @@ var YouTubePlayer = new Class({
         return s.indexOf(".") == -1;
     }.protect()
 });
+
+YouTubePlayer.qualities = ['default',
+                           'small',
+                           'medium',
+                           'large',
+                           'hd720',
+                           'hd1080'
+                          ];
+
+YouTubePlayer.states = {
+    '-1': 'unstarted',
+    '0':  'ended',
+    '1':  'playing',
+    '2':  'paused',
+    '3':  'buffering',
+    '5':  'video cued'
+};
