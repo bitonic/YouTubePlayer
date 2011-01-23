@@ -19,7 +19,13 @@
   ...
 */
 
-var YouTubeVideo = new Class({
+// This class uses the following global variables, and it won't work
+// if you override them:
+// - window.onYouTubePlayerReady: a function required by the YouTube
+//   APIs, that is called when the player is ready.
+// - window.youTubePlayerCounter: keeps track of how many videos we have.
+// - window.youTubePlayers: keeps all the istances of the class in a object.
+var YouTubePlayer = new Class({
     Extends: Swiff,
     Implements: Events,
 
@@ -64,32 +70,43 @@ var YouTubeVideo = new Class({
             }, true);            
         }
 
-        // Set the player id if we have it.
-        // Actually since now the youtube video is a class, it's
-        // pretty useless to have this functionality. I'll decide
-        // later whether to keep it or not.
+        // Set a unique number for the video, so that we can recognise
+        // it when onYouTubePlayerReady gets called.
+        if (window.youTubePlayerCounter == undefined) {
+            window.youTubePlayerCounter = this.uniqueId = 0;
+        } else {
+            window.youTubePlayerCounter++;
+            this.uniqueId = window.youTubePlayerCounter;
+        }
         if (options.id) {
-            swfUrl.setData({playerapiid: options.id}, true);
+            swfUrl.setData({playerapiid: this.uniqueId}, true);
         }
 
+        // Call swiff
         this.parent(swfUrl, options);
 
-        // Fire the "playerReady" events when the player is ready.
         var self = this;
-        window.onYouTubePlayerReady = function() {
-            self.playerReady = true,
-            self.fireEvent('playerReady');
+        // We create an object with the videos, with the uniqueId as
+        // an index.
+        if (window.youTubePlayers == undefined) {
+            window.youTubePlayers = new Object();
         }
+        window.youTubePlayers[self.uniqueId.toString()] = self;
+
+        // Fire the "playerReady" events when the player is ready.
+        window.onYouTubePlayerReady = function(id) {
+            youTubePlayers[id].playerReady = true,
+            youTubePlayers[id].fireEvent('playerReady');
+        }
+
 
         // Fire the yt api events
         for (var i in this.ytEvents) {
-            eval("window.ytEventsListener_" + this.ytEvents[i] + " = function(arg) {" +
-                      "self.fireEvent('" + i + "', arg);" +
-                 "}");
-
-            this.enqueueAction('addEventListener', this.ytEvents[i],
-                               'ytEventsListener_' + this.ytEvents[i]);
+            var fn = 'window.youTubePlayers[' + this.uniqueId +
+                '].fireEventFunction("' + i + '")';
+            this.enqueueAction('addEventListener', this.ytEvents[i], fn);
         }
+
     },
 
     
@@ -97,16 +114,7 @@ var YouTubeVideo = new Class({
     // Class internals...
 
     addEvent: function(type, fn) {
-        if (this.ytEvents[type] != undefined) {
-            // If the event is one of the events provided by the API,
-            // add the event listener through the API function.
-            Events.prototype.addEvent.call(this, type, fn);
-
-            var self = this;
-            window.ytEventsListener = function(arg) {
-                self.fireEvent(type, arg);
-            }
-        } else if (this.playerReady && type == 'playerReady') {
+        if (this.playerReady && type == 'playerReady') {
             // If the event is playerReady and the player is ready,
             // simply execute the function.
             fn();
@@ -148,6 +156,15 @@ var YouTubeVideo = new Class({
             return this.object[fnName].apply(this.object, args);
         } else {
             return null;
+        }
+    },
+
+    // We need this function so that we can return a global function
+    // for the state changes
+    fireEventFunction: function(type) {
+        var self = this;
+        return function() {
+            self.fireEvent.apply(self, [type].concat(arguments));
         }
     },
 
