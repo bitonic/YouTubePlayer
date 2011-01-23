@@ -101,7 +101,7 @@
           // Change the video url and embed code
           var urlAndEmbed = function() {
               $('videoUrl').set('text', video.getVideoUrl());
-              $('embed').set('value', video.getEmbedCode());
+              $('embed').set('html', video.getVideoEmbedCode());
           };
 
           // Counts the events
