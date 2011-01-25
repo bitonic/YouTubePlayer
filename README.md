@@ -14,6 +14,7 @@ You will need the core MooTools library and the URI class from More.
 
 ## Advantages
 The main advantages are:
+
 *   You do not have to define the "onYouTubePlayerReady" function. The
     class will create it itself.
 *   All the functions that return void are automatically enqueued if the
