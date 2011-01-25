@@ -28,9 +28,9 @@ The main advantages are:
     'playbackQualityChange' and 'error'. These event can be added with
     the usual .addEvent function directly on the YouTubePlayer object.
 *   All the standard api functions have been added to the YouTubePlayer
-    &lt;object&gt;. You can also set specific attributes of the object with the
-    "set" and "get" functions, that operate on the &lt;object&gt;.
-*   The &lt;object&gt; is still accessible via the .object attribute of the
+    bject You can also set specific attributes of the object with the
+    "set" and "get" functions, that operate on the actual flash &lt;object&gt; tag.
+*   The &lt;object&gt; tag is still accessible via the .object attribute of the
     YouTubePlayer object.
 
 
