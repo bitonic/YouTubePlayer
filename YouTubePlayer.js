@@ -234,6 +234,9 @@ var YouTubePlayer = new Class({
     },
 
     seekTo: function(seconds, seekAhead) {
+        if (seekAhead == undefined) {
+            seekAhead = false;
+        }
         this.enqueueAction('seekTo', seconds, seekAhead);
     },
 
