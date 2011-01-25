@@ -14,17 +14,17 @@ You will need the core MooTools library and the URI class from More.
 
 ## Advantages
 The main advantages are:
-* You do not have to define the "onYouTubePlayerReady" function. The
-  class will create it itself.
-* All the functions that return void are automatically enqueued if the
-  player is not ready, and executed when the player becomes ready.
-* MooTools-like events: 'playerReady', 'stateChange',
-  'playbackQualityChange' and 'error'. These event can be added with
-  the usual .addEvent function directly on the YouTubePlayer object.
-* All the standard api functions have been added to the YouTubePlayer
-  <object>. You can also set specific attributes of the object with the
-  "set" and "get" functions, that operate on the <object>.
-* The <object> is still accessible via the .object attribute of the
-  YouTubePlayer object.
+*   You do not have to define the "onYouTubePlayerReady" function. The
+    class will create it itself.
+*   All the functions that return void are automatically enqueued if the
+    player is not ready, and executed when the player becomes ready.
+*   MooTools-like events: 'playerReady', 'stateChange',
+    'playbackQualityChange' and 'error'. These event can be added with
+    the usual .addEvent function directly on the YouTubePlayer object.
+*   All the standard api functions have been added to the YouTubePlayer
+    <object>. You can also set specific attributes of the object with the
+    "set" and "get" functions, that operate on the <object>.
+*   The <object> is still accessible via the .object attribute of the
+    YouTubePlayer object.
 
 
