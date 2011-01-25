@@ -5,6 +5,9 @@ to provide a simple interface to the [YouTube player
 API](http://code.google.com/apis/youtube/js_api_reference.html
 "YouTube JS API reference"), built on top of the Swiff class.
 
+The code is well commented and it should be easy to read. The class
+serves my needs as it is, but if you need a feature contact me!
+
 ## Demo
 I coded a simple [clone](http://mazzo.li/YouTubePlayer/demo.html
 "Demo") of the original demo.
@@ -19,6 +22,8 @@ The main advantages are:
     class will create it itself.
 *   All the functions that return void are automatically enqueued if the
     player is not ready, and executed when the player becomes ready.
+*   The functions that are supposed to return something return null if the
+    player is not ready.
 *   MooTools-like events: 'playerReady', 'stateChange',
     'playbackQualityChange' and 'error'. These event can be added with
     the usual .addEvent function directly on the YouTubePlayer object.
