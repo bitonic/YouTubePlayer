@@ -85,6 +85,12 @@ var YouTubePlayer = new Class({
         // Call swiff
         this.parent(swfUrl, options);
 
+        // If the suggestedQuality is different then default, change
+        // it
+        if (options.suggestedQuality != 'default') {
+            this.setPlaybackQuality(options.suggestedQuality);
+        }
+        
         var self = this;
         // We create an object with the videos, with the uniqueId as
         // an index.
@@ -98,7 +104,6 @@ var YouTubePlayer = new Class({
             youTubePlayers[id].playerReady = true,
             youTubePlayers[id].fireEvent('playerReady');
         }
-
 
         // Fire the yt api events
         for (var i in this.ytEvents) {
