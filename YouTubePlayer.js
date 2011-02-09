@@ -334,7 +334,7 @@ var YouTubePlayer = new Class({
                 self.setPlaybackQuality(suggestedQuality);
             };
             // Add the function to the list of functions
-            this.playbackQualityEvents = this.playbackQualityEvents.push(fn);
+            this.playbackQualityEvents.push(fn);
             this.addEvent('stateChange', fn);
         }
     },
