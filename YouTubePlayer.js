@@ -169,11 +169,11 @@ var YouTubePlayer = new Class({
     },
 
     get: function(attribute) {
-        return this.object.get(attribute);
+        return this.object[attribute];
     },
 
     set: function(attribute, value) {
-        this.object.set(attribute, value);
+        this.object[attribute] = value;
     },
 
 
