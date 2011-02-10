@@ -94,7 +94,7 @@ var YouTubePlayer = new Class({
         var self = this;
         // We create an object with the videos, with the uniqueId as
         // an index.
-        if (window.youTubPlayers === undefined) {
+        if (window.youTubePlayers === undefined) {
             window.youTubePlayers = {};
         }
         window.youTubePlayers[self.uniqueId.toString()] = self;
@@ -107,7 +107,7 @@ var YouTubePlayer = new Class({
 
         // Fire the yt api events
         var i;
-        for (i = 0; i < this.ytEvents.length; i++) {
+        for (i in this.ytEvents) {
             var fn = 'window.youTubePlayers[' + this.uniqueId +
                 '].fireEventFunction("' + i + '")';
             this.enqueueAction('addEventListener', this.ytEvents[i], fn);
