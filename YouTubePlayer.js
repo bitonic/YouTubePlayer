@@ -62,17 +62,17 @@ var YouTubePlayer = new Class({
 
         var swfUrl;
         if (options.embedded) {
-            var swfUrl = this.embeddedURI;
+            swfUrl = this.embeddedURI;
             swfUrl.set('directory', swfUrl.get('directory') + options.videoId);
         } else {
-            var swfUrl = this.chromelessURI.setData({
-                video_id: options.videoId,
+            swfUrl = this.chromelessURI.setData({
+                video_id: options.videoId
             }, true);            
         }
 
         // Set a unique number for the video, so that we can recognise
         // it when onYouTubePlayerReady gets called.
-        if (window.youTubePlayerCounter == undefined) {
+        if (window.youTubePlayerCounter === undefined) {
             window.youTubePlayerCounter = this.uniqueId = 0;
         } else {
             window.youTubePlayerCounter++;
@@ -85,23 +85,29 @@ var YouTubePlayer = new Class({
         // Call swiff
         this.parent(swfUrl, options);
 
+        // If the suggestedQuality is different then default, change
+        // it
+        if (options.suggestedQuality !== 'default') {
+            this.setPlaybackQuality(options.suggestedQuality);
+        }
+        
         var self = this;
         // We create an object with the videos, with the uniqueId as
         // an index.
-        if (window.youTubePlayers == undefined) {
+        if (window.youTubePlayers === undefined) {
             window.youTubePlayers = {};
         }
         window.youTubePlayers[self.uniqueId.toString()] = self;
 
         // Fire the "playerReady" events when the player is ready.
         window.onYouTubePlayerReady = function(id) {
-            youTubePlayers[id].playerReady = true,
+            youTubePlayers[id].playerReady = true;
             youTubePlayers[id].fireEvent('playerReady');
-        }
-
+        };
 
         // Fire the yt api events
-        for (var i in this.ytEvents) {
+        var i;
+        for (i in this.ytEvents) {
             var fn = 'window.youTubePlayers[' + this.uniqueId +
                 '].fireEventFunction("' + i + '")';
             this.enqueueAction('addEventListener', this.ytEvents[i], fn);
@@ -114,7 +120,7 @@ var YouTubePlayer = new Class({
     // Class internals...
 
     addEvent: function(type, fn) {
-        if (this.playerReady && type == 'playerReady') {
+        if (this.playerReady && type === 'playerReady') {
             // If the event is playerReady and the player is ready,
             // simply execute the function.
             fn();
@@ -165,7 +171,7 @@ var YouTubePlayer = new Class({
         var self = this;
         return function() {
             self.fireEvent.apply(self, [type].concat(arguments));
-        }
+        };
     },
 
     get: function(attribute) {
@@ -188,9 +194,6 @@ var YouTubePlayer = new Class({
             suggestedQuality = this.suggestedQuality;
         }
 
-        var fnName;
-
-        
         if (this.isId(idOrUrl)) {
             // If the play paramenter is not present, default to load
             if (play === undefined || play) {
@@ -234,6 +237,9 @@ var YouTubePlayer = new Class({
     },
 
     seekTo: function(seconds, seekAhead) {
+        if (seekAhead === undefined) {
+            seekAhead = false;
+        }
         this.enqueueAction('seekTo', seconds, seekAhead);
     },
 
@@ -312,7 +318,7 @@ var YouTubePlayer = new Class({
         // again.
 
         var self = this;
-        if (this.getPlayerState() == 1 || this.getPlayerState() == 2) {
+        if (this.getPlayerState() === 1 || this.getPlayerState() === 2) {
             this.suggestedQuality = suggestedQuality;
             
             this.enqueueAction('setPlaybackQuality', suggestedQuality);
@@ -326,7 +332,7 @@ var YouTubePlayer = new Class({
                 self.setPlaybackQuality(suggestedQuality);
             };
             // Add the function to the list of functions
-            this.playbackQualityEvents = this.playbackQualityEvents.push(fn);
+            this.playbackQualityEvents.push(fn);
             this.addEvent('stateChange', fn);
         }
     },
@@ -355,7 +361,7 @@ var YouTubePlayer = new Class({
     // This function is supposed to test id and urls only.
     isId: function(s) {
         // If it has a dot in it, it must be an url.
-        return s.indexOf(".") == -1;
+        return s.indexOf(".") === -1;
     }.protect()
 });
 
