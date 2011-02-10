@@ -80,20 +80,12 @@
 
           // Player size
           $('width').set('value', video.get('width'));
-          refresh.push(function() {
-              $('height').set('text', video.get('height'));
-          })
+          $('height').set('value', video.get('height'));
 
           $('setSize').addEvent('click', function() {
               var width = parseInt($('width').get('value'));
-              var height;
-              if ($('ratio').get('value') == '1') {
-                  // 16:9
-                  height = width * 9 / 16;
-              } else {
-                  // 4:3
-                  height = width * 3 / 4;
-              }
+              var height = parseInt($('height').get('height'));
+
               video.setSize(width, height);
           });
 
@@ -237,13 +229,8 @@
       <input type="submit" value="Go" id="setVolume" />
 
       <h3>Player size</h3>
-      Aspect ratio:
-      <select id="ratio">
-        <option value="2">4:3</option>
-        <option value="1">16:9</option>
-      </select> |
       Width: <input type="text" size="4" id="width"/> |
-      Height: <span id="height"></span>
+      Height: <input type="text" size="4" id="height"/> |
       <input type="submit" value="Go" id="setSize" />
 
       <h3>History</h3>
