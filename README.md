@@ -8,9 +8,13 @@ API](http://code.google.com/apis/youtube/js_api_reference.html
 The code is well commented and it should be easy to read. The class
 serves my needs as it is, but if you need a feature contact me!
 
-## Demo
-I coded a simple [clone](http://mazzo.li/YouTubePlayer/demo.html
-"Demo") of the original demo.
+## More infos
+
+I wrote an
+[article](http://localhost:8000/articles/2011-02-07-youtubeplayer.html)
+describing what this class is for and how to use it. Go to the bottom
+of the page for a demo that shows more or less what you can do with
+it.
 
 ## Requirements
 You will need the core MooTools library and the URI class from More.
