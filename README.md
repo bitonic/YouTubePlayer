@@ -11,7 +11,7 @@ serves my needs as it is, but if you need a feature contact me!
 ## More infos
 
 I wrote an
-[article](http://localhost:8000/articles/2011-02-07-youtubeplayer.html)
+[article](http://mazzo.li/b/articles/2011-02-07-youtubeplayer.html)
 describing what this class is for and how to use it. Go to the bottom
 of the page for a demo that shows more or less what you can do with
 it.
